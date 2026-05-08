@@ -54,7 +54,7 @@ interface InternalPendingItem extends PiPendingFormatInput {
 }
 
 interface PiPendingGlobalState {
-  ui?: ExtensionUIContext;
+  ui: ExtensionUIContext | undefined;
   widgetId: string;
   placement: PiPendingPlacement;
   items: Map<string, InternalPendingItem>;
@@ -73,6 +73,7 @@ function globalState(): PiPendingGlobalState {
       placement: "aboveEditor",
       items: new Map(),
       nextSequence: 1,
+      ui: undefined,
       widgetInstalled: false,
     };
   }

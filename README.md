@@ -1,7 +1,8 @@
 # pi-pending
 
-Small Pi TUI helper for rendering forced one-line pending-operation rows above
-the editor.
+Tiny Pi TUI helper for one-line pending job widgets above the editor.
+
+Use `pi-pending` from Pi extensions that start background jobs, multi-model requests, long-running tasks, or any asynchronous operation that should stay visible while the agent continues working.
 
 ```ts
 import { createPiPending } from "pi-pending";
@@ -31,3 +32,26 @@ Default visible row:
 Details stay in metadata; only elapsed seconds, label, and text are visible.
 Rows are always normalized to one terminal line, truncated to width, padded to
 width, and styled with Pi's `toolPendingBg` + `toolTitle` theme colors.
+
+## Install
+
+Use as a GitHub dependency from another Pi package:
+
+```json
+{
+  "dependencies": {
+    "pi-pending": "github:sshkeda/pi-pending#v0.1.1"
+  }
+}
+```
+
+## Development
+
+```bash
+npm install
+npm test
+```
+
+## License
+
+MIT

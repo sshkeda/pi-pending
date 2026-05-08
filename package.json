@@ -8,10 +8,13 @@
     "pi",
     "pi-extension",
     "tui",
-    "pending"
+    "pending",
+    "background-jobs",
+    "agent-ui",
+    "typescript"
   ],
   "license": "MIT",
-  "author": "sshkeda",
+  "author": "Stephen Shkeda",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/sshkeda/pi-pending.git"

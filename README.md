@@ -29,9 +29,26 @@ Default visible row:
 (003s) Claude: roast this architecture plan
 ```
 
-Details stay in metadata; only elapsed seconds, label, and text are visible.
-Rows are always normalized to one terminal line, truncated to width, padded to
-width, and styled with Pi's `toolPendingBg` + `toolTitle` theme colors.
+For unlabeled operations, the id is shown first so users can copy the debug
+handle:
+
+```ts
+const pending = createPiPending({
+  namespace: "background-bash",
+  format: (job) => `$ ${job.text}`,
+});
+```
+
+```txt
+bg_12 (045s) $ cd ../pi-stat422 && python3 scripts/run_benchmark.py
+```
+
+Set `showId: false` to hide ids, or `showId: true` to show ids even for labeled
+items.
+
+Details stay in metadata. Rows are always normalized to one terminal line,
+truncated to width, padded to width, and styled with Pi's `toolPendingBg` +
+`toolTitle` theme colors.
 
 ## Install
 

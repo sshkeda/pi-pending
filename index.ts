@@ -15,6 +15,7 @@ export interface PiPendingFormatInput {
 }
 
 export type PiPendingFormatter = (item: PiPendingFormatInput) => string;
+export type PiPendingShowId = boolean | "auto";
 
 export interface PiPendingStartInput {
   id: string;
@@ -35,6 +36,7 @@ export interface PiPendingOptions {
   widgetId?: string;
   placement?: PiPendingPlacement;
   format?: PiPendingFormatter;
+  showId?: PiPendingShowId;
 }
 
 export interface PiPendingRegistry {
@@ -51,6 +53,7 @@ interface InternalPendingItem extends PiPendingFormatInput {
   key: string;
   sequence: number;
   format: PiPendingFormatter;
+  showId: PiPendingShowId;
 }
 
 interface PiPendingGlobalState {
@@ -101,6 +104,10 @@ function defaultFormat(item: PiPendingFormatInput): string {
   return item.label ? `${item.label}: ${item.text}` : item.text;
 }
 
+function shouldShowId(item: InternalPendingItem): boolean {
+  return item.showId === true || (item.showId === "auto" && item.label === undefined);
+}
+
 function sortedItems(state: PiPendingGlobalState): InternalPendingItem[] {
   return [...state.items.values()].sort((a, b) => a.sequence - b.sequence);
 }
@@ -112,7 +119,8 @@ function createPendingWidget(state: PiPendingGlobalState, tui: TUI, theme: Theme
       if (width <= 0) return [];
       return sortedItems(state).map((item) => {
         const body = normalizeVisibleText(item.format(item));
-        const raw = `(${formatElapsedSeconds(item.startedAt)}s) ${body}`;
+        const elapsed = `(${formatElapsedSeconds(item.startedAt)}s)`;
+        const raw = shouldShowId(item) ? `${item.id} ${elapsed} ${body}` : `${elapsed} ${body}`;
         const line = padToWidth(truncateToWidth(raw, width, "..."), width);
         return theme.bg("toolPendingBg", theme.fg("toolTitle", line));
       });
@@ -146,6 +154,7 @@ export function createPiPending(options: PiPendingOptions): PiPendingRegistry {
   const namespace = normalizeVisibleText(options.namespace);
   if (!namespace) throw new Error("pi-pending namespace is required");
   const format = options.format ?? defaultFormat;
+  const showId = options.showId ?? "auto";
   const state = globalState();
   state.widgetId = options.widgetId ?? state.widgetId ?? DEFAULT_WIDGET_ID;
   state.placement = options.placement ?? state.placement ?? "aboveEditor";
@@ -174,6 +183,7 @@ export function createPiPending(options: PiPendingOptions): PiPendingRegistry {
         startedAt: item.startedAt ?? existing?.startedAt ?? Date.now(),
         sequence: existing?.sequence ?? state.nextSequence++,
         format,
+        showId,
         ...(item.label !== undefined ? { label: item.label } : {}),
         ...(item.details !== undefined ? { details: item.details } : {}),
       });

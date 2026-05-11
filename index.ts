@@ -95,6 +95,16 @@ function padToWidth(text: string, width: number): string {
   return text + " ".repeat(Math.max(0, width - visibleWidth(text)));
 }
 
+export function formatElapsedDuration(startedAt: number, now = Date.now()): string {
+  const totalSeconds = Math.max(0, Math.floor((now - startedAt) / 1000));
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+  if (hours > 0) return `${hours}h ${minutes}m ${seconds}s`;
+  if (minutes > 0) return `${minutes}m ${seconds}s`;
+  return `${seconds}s`;
+}
+
 export function formatElapsedSeconds(startedAt: number, now = Date.now()): string {
   const seconds = Math.max(0, Math.floor((now - startedAt) / 1000));
   return seconds < 1000 ? String(seconds).padStart(3, "0") : String(seconds);
@@ -117,11 +127,20 @@ function createPendingWidget(state: PiPendingGlobalState, tui: TUI, theme: Theme
   return {
     render(width: number): string[] {
       if (width <= 0) return [];
-      return sortedItems(state).map((item) => {
-        const body = normalizeVisibleText(item.format(item));
-        const elapsed = `(${formatElapsedSeconds(item.startedAt)}s)`;
-        const raw = shouldShowId(item) ? `${item.id} ${elapsed} ${body}` : `${elapsed} ${body}`;
-        const line = padToWidth(truncateToWidth(raw, width, "..."), width);
+      const rows = sortedItems(state).map((item) => ({
+        item,
+        body: normalizeVisibleText(item.format(item)),
+        elapsed: formatElapsedDuration(item.startedAt),
+        id: shouldShowId(item) ? item.id : undefined,
+      }));
+      const elapsedWidth = rows.reduce((max, row) => Math.max(max, visibleWidth(row.elapsed)), 0);
+      const idWidth = rows.reduce((max, row) => Math.max(max, visibleWidth(row.id ?? "")), 0);
+      return rows.map((row) => {
+        const elapsed = padToWidth(row.elapsed, elapsedWidth);
+        const prefix = row.id
+          ? `${elapsed} ${padToWidth(row.id, idWidth)} `
+          : `${elapsed} `;
+        const line = padToWidth(truncateToWidth(`${prefix}${row.body}`, width, "..."), width);
         return theme.bg("toolPendingBg", theme.fg("toolTitle", line));
       });
     },

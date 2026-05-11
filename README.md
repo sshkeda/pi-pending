@@ -26,7 +26,7 @@ pending.finish("job_1");
 Default visible row:
 
 ```txt
-(003s) Claude: roast this architecture plan
+4m 16s Claude: roast this architecture plan
 ```
 
 For unlabeled operations, the id is shown first so users can copy the debug
@@ -40,7 +40,7 @@ const pending = createPiPending({
 ```
 
 ```txt
-bg_12 (045s) $ cd ../pi-stat422 && python3 scripts/run_benchmark.py
+4m 16s bg_12 $ cd ../pi-stat422 && python3 scripts/run_benchmark.py
 ```
 
 Set `showId: false` to hide ids, or `showId: true` to show ids even for labeled
@@ -57,7 +57,7 @@ Use as a GitHub dependency from another Pi package:
 ```json
 {
   "dependencies": {
-    "pi-pending": "github:sshkeda/pi-pending#v0.1.1"
+    "pi-pending": "github:sshkeda/pi-pending#v0.1.3"
   }
 }
 ```

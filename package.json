@@ -1,6 +1,6 @@
 {
   "name": "pi-pending",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Tiny Pi UI helper for one-line pending operation widgets above the editor.",
   "type": "module",
   "keywords": [

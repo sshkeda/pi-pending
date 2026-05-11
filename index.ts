@@ -37,6 +37,8 @@ export interface PiPendingOptions {
   placement?: PiPendingPlacement;
   format?: PiPendingFormatter;
   showId?: PiPendingShowId;
+  minElapsedColumnWidth?: number;
+  minIdColumnWidth?: number;
 }
 
 export interface PiPendingRegistry {
@@ -54,6 +56,8 @@ interface InternalPendingItem extends PiPendingFormatInput {
   sequence: number;
   format: PiPendingFormatter;
   showId: PiPendingShowId;
+  minElapsedColumnWidth: number;
+  minIdColumnWidth: number;
 }
 
 interface PiPendingGlobalState {
@@ -66,6 +70,7 @@ interface PiPendingGlobalState {
 }
 
 const DEFAULT_WIDGET_ID = "pi-pending";
+const DEFAULT_MIN_ELAPSED_COLUMN_WIDTH = "4m 16s".length;
 const GLOBAL_KEY = Symbol.for("pi-pending.globalState");
 
 function globalState(): PiPendingGlobalState {
@@ -133,8 +138,14 @@ function createPendingWidget(state: PiPendingGlobalState, tui: TUI, theme: Theme
         elapsed: formatElapsedDuration(item.startedAt),
         id: shouldShowId(item) ? item.id : undefined,
       }));
-      const elapsedWidth = rows.reduce((max, row) => Math.max(max, visibleWidth(row.elapsed)), 0);
-      const idWidth = rows.reduce((max, row) => Math.max(max, visibleWidth(row.id ?? "")), 0);
+      const elapsedWidth = rows.reduce(
+        (max, row) => Math.max(max, row.item.minElapsedColumnWidth, visibleWidth(row.elapsed)),
+        0,
+      );
+      const idWidth = rows.reduce(
+        (max, row) => Math.max(max, row.item.minIdColumnWidth, visibleWidth(row.id ?? "")),
+        0,
+      );
       return rows.map((row) => {
         const elapsed = padToWidth(row.elapsed, elapsedWidth);
         const prefix = row.id
@@ -173,7 +184,9 @@ export function createPiPending(options: PiPendingOptions): PiPendingRegistry {
   const namespace = normalizeVisibleText(options.namespace);
   if (!namespace) throw new Error("pi-pending namespace is required");
   const format = options.format ?? defaultFormat;
-  const showId = options.showId ?? "auto";
+  const showId = options.showId ?? true;
+  const minElapsedColumnWidth = options.minElapsedColumnWidth ?? DEFAULT_MIN_ELAPSED_COLUMN_WIDTH;
+  const minIdColumnWidth = options.minIdColumnWidth ?? 0;
   const state = globalState();
   state.widgetId = options.widgetId ?? state.widgetId ?? DEFAULT_WIDGET_ID;
   state.placement = options.placement ?? state.placement ?? "aboveEditor";
@@ -203,6 +216,8 @@ export function createPiPending(options: PiPendingOptions): PiPendingRegistry {
         sequence: existing?.sequence ?? state.nextSequence++,
         format,
         showId,
+        minElapsedColumnWidth,
+        minIdColumnWidth,
         ...(item.label !== undefined ? { label: item.label } : {}),
         ...(item.details !== undefined ? { details: item.details } : {}),
       });

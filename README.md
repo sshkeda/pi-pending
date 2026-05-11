@@ -26,11 +26,10 @@ pending.finish("job_1");
 Default visible row:
 
 ```txt
-4m 16s Claude: roast this architecture plan
+4m 16s job_1 Claude: roast this architecture plan
 ```
 
-For unlabeled operations, the id is shown first so users can copy the debug
-handle:
+Ids are shown by default so users can copy the debug handle:
 
 ```ts
 const pending = createPiPending({
@@ -43,8 +42,9 @@ const pending = createPiPending({
 4m 16s bg_12 $ cd ../pi-stat422 && python3 scripts/run_benchmark.py
 ```
 
-Set `showId: false` to hide ids, or `showId: true` to show ids even for labeled
-items.
+Set `showId: false` to hide ids, or `showId: "auto"` to show ids only for
+unlabeled items. Use `minElapsedColumnWidth` and `minIdColumnWidth` to keep
+columns stable across multi-row widgets.
 
 Details stay in metadata. Rows are always normalized to one terminal line,
 truncated to width, padded to width, and styled with Pi's `toolPendingBg` +

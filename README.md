@@ -1,6 +1,6 @@
 # pi-pending
 
-Tiny Pi TUI helper for one-line pending job widgets above the editor.
+Tiny Pi TUI helper for one shared table of one-line pending jobs above the editor.
 
 Use `pi-pending` from Pi extensions that start background jobs, multi-model requests, long-running tasks, or any asynchronous operation that should stay visible while the agent continues working.
 
@@ -46,6 +46,8 @@ Set `showId: false` to hide ids, or `showId: "auto"` to show ids only for
 unlabeled items. Use `minElapsedColumnWidth` and `minIdColumnWidth` to keep
 columns stable across multi-row widgets.
 
+All `createPiPending(...)` registries in the same Pi runtime render into one shared `pi-pending` table. Do not create per-extension widget ids; `widgetId` is deprecated and ignored.
+
 Details stay in metadata. Rows are always normalized to one terminal line,
 truncated to width, padded to width, and styled with Pi's `toolPendingBg` +
 `toolTitle` theme colors.
@@ -57,7 +59,7 @@ Use as a GitHub dependency from another Pi package:
 ```json
 {
   "dependencies": {
-    "pi-pending": "github:sshkeda/pi-pending#v0.1.3"
+    "pi-pending": "github:sshkeda/pi-pending#v0.1.5"
   }
 }
 ```

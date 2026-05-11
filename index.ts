@@ -33,6 +33,7 @@ export interface PiPendingUpdateInput {
 
 export interface PiPendingOptions {
   namespace: string;
+  /** @deprecated pi-pending always renders to the shared "pi-pending" widget. */
   widgetId?: string;
   placement?: PiPendingPlacement;
   format?: PiPendingFormatter;
@@ -188,7 +189,7 @@ export function createPiPending(options: PiPendingOptions): PiPendingRegistry {
   const minElapsedColumnWidth = options.minElapsedColumnWidth ?? DEFAULT_MIN_ELAPSED_COLUMN_WIDTH;
   const minIdColumnWidth = options.minIdColumnWidth ?? 0;
   const state = globalState();
-  state.widgetId = options.widgetId ?? state.widgetId ?? DEFAULT_WIDGET_ID;
+  state.widgetId = DEFAULT_WIDGET_ID;
   state.placement = options.placement ?? state.placement ?? "aboveEditor";
 
   return {
